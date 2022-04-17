@@ -1,0 +1,16 @@
+architektur
+	R shiny app
+	evtl. daten aus API
+
+darstellung
+	3 plots (corporate taxes x zeit, outcome variable x zeit, korrelation x zeit)
+	gruppierung nach länder
+	evtl. grosse events eintragen in der time-line (z.B. finanzkrise)
+
+funktionen
+	länder aussuchen
+	outcome variablen aussuchen (immer nur 1)
+	time lag der outcome variabel anpassen können (default 0 monate)
+	evtl. zeitgrenzen einstellen
+
+
