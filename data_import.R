@@ -18,7 +18,8 @@ packages <- c(
   "tidyr", #used in particular for drop_na()
   "dplyr", #general data manipulation
   "data.table", #used in particular for fwrite()
-  "todor" #helps with code organization
+  "todor", #helps with code organization
+  "wbstats"
 ) 
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
@@ -28,8 +29,8 @@ lapply(packages, library, character.only = TRUE)
 
 
 # 2 - Fetch data from OECD through rsdmx  ------------------------------------------------
-#rsdmx lists OECD as a provider
-#This allows downloading data through a few simple parameters
+# rsdmx lists OECD as a provider
+# This allows downloading data through a few simple parameters
 
 #The following code blocks fetch OECD data for
 #corporate income tax, GDP per capita growth and unemployment
@@ -102,7 +103,7 @@ EMPdf <- EMPdf %>%
          SEX_label.en == "All persons") %>%
   rename(country = COUNTRY_label.en, 
          year = obsTime) %>%
-  mutate("employment rate" = 100-obsValue) %>%
+  #mutate("employment rate" = 100-obsValue) %>%
   select(country, year, "employment rate")
 
 
