@@ -11,8 +11,8 @@ rm(list = ls())
 Sys.setenv(LANG = "en")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# The next few lines serve to load packages
-# (and install them, if not installed already)
+# Load packages
+# (or install them, if not installed already)
 packages <- c(
   "rsdmx", #allows downloading OECD data
   "tidyr", #used in particular for drop_na()
