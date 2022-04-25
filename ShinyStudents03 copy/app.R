@@ -5,11 +5,66 @@
 # FIRST: set the working directory!
 # Type ctrl-L to clear the console
 rm(list = ls())
+Sys.setenv(LANG = "en")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 graphics.off()
 
 # --- Setup
-library(shiny)
-library(ggplot2)
+packages <- c(
+  "shiny",
+  "ggplot2",
+  "todor"
+) 
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
+lapply(packages, library, character.only = TRUE) 
+
+data <- fread('./data/shiny_data.csv')
+
+
+
+
+
+
+
+# TODO TASKS (in this R file only)
+# DATA
+  # add time lag variable which lags the DV by x years
+  # add correlation variable btw IV and DV
+# GUI
+  # add multiple choice GUI element for dependent variable selection
+  # add multiple choice GUI element for country selection (maybe with text search bar)
+  # add range selector GUI element for time frame selection
+  # add range selection GUI element for time lag (i.e. x years)
+# PLOTS
+  # add plot for IV (= corporate income tax) vs. time 
+  # add plot for DV vs. time
+  # compute correlation btw DV and IV in time sample and display number
+  # create the above three for every country selected, i.e. n of plots = n of selected countries x 2
+  # compute correlation across sample of all selected countries and display it somewhere in big font
+# OTHER THINGS
+  # style the plots nicely
+  # write text on the shiny app that explains what it does and how to use it
+  # write documentation on github
+# MORE THAN IS ASKED FOR
+  # give different GUI layout options for the user
+
+
+
+
+# display only every third year on x axis in plots (see link below)
+# https://stackoverflow.com/questions/58470039/need-help-displaying-every-10th-year-on-x-axis-ggplot-graph
+
+
+
+
+
+
+
+
+
+
+
 load("Student.RData")
 
 ui <- fluidPage(
@@ -19,7 +74,7 @@ ui <- fluidPage(
     sidebarPanel(
       selectInput(inputId = "x", 
                   label = "X-axis:",
-                  choices = c("math", "stats", "econ", "arts"), 
+                  choices = colnames(grade[,3:6]), 
                   selected = "imdb_num_votes"),
       selectInput(inputId = "y", 
                   label = "Y-axis:",
@@ -58,6 +113,7 @@ ui <- fluidPage(
   )
 )
 
+
 server <- function(input, output) {
   output$scatterplot <- renderPlot({
     ggplot(data = grade[1:input$n,], aes_string(x = input$x, y = input$y, col = input$c)) +
@@ -71,6 +127,7 @@ server <- function(input, output) {
   
   
 }
+
 
 # Create a Shiny app 
 shinyApp(ui = ui, server = server)
