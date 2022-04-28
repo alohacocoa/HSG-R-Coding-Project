@@ -13,8 +13,8 @@ myUi <- fluidPage(
       h2("Do you know about your country?"),
       p("Select your data to display"),
       sliderInput("integer", "Integer:",
-                  min = 1990, max = 2022,
-                  value = 2010
+                  min = 1990, max = 2020,
+                  value = 2010, step = 10
       ),
       selectInput(inputId = "y", 
                   label = "Y-axis:",
