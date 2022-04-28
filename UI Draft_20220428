@@ -1,0 +1,64 @@
+rm(list = ls())
+graphics.off()
+
+# --- Setup
+library(shiny)
+library(ggplot2)
+
+# --- User Interface (shows the plot)
+myUi <- fluidPage(
+  sidebarLayout(
+    # Inputs
+    sidebarPanel(
+      h2("Do you know about your country?"),
+      p("Select your data to display"),
+      sliderInput("integer", "Integer:",
+                  min = 1990, max = 2022,
+                  value = 2010
+      ),
+      selectInput(inputId = "y", 
+                  label = "Y-axis:",
+                  choices = c("GDP", "GNP", "Unemployment Rate"),
+                  selected = "GDP"
+      ),
+      
+      region <- selectInput(inputId = "r", 
+                  label = "Region:",
+                  choices = c("Africa", "Asia", "Europe", "North America", "Oceania", "South America")
+      ),
+      
+      if(identical(input$region,"Asia")) 
+      {selectINput(inputId = "ASIA", label = "Country: ", choices = c("China", "SIngapore", ...)}
+        
+        else if(identical(input$region,"Europe")) 
+        {selectINput(inputId = "EU", label = "Country: ", choices = c(...)}
+      ),
+    ),    # End of sidebarPanel
+    
+    # Outputs
+    mainPanel(
+      
+      # Output: Tabset w/ plot, summary, and table ----
+      tabsetPanel(type = "tabs",
+                  tabPanel("Plot", plotOutput("plot")),
+                  tabPanel("Summary", verbatimTextOutput("summary")),
+                  tabPanel("Table", tableOutput("table"))
+                  
+      plotOutput(outputId = "myPlot")
+    )    # end of  mainPanel
+    
+  )      # end of sidebarLayout
+)        # end of fluidPage
+
+# --- Server (creates the plot)
+myServer <- function(input, output) {
+  output$myPlot <- renderPlot({
+    ggplot(data=wbstat$xxxx, aes(x=dose, y=len, group=1)) +
+      geom_line()+
+      geom_point(coord_fixed())
+  })    # end of renderPlot
+}       # end of function
+
+# Create a Shiny app 
+shinyApp(ui = myUi, server = myServer)
+
