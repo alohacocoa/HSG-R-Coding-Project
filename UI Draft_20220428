@@ -39,6 +39,8 @@ myUi <- fluidPage(
     mainPanel(
       
       # Output: Tabset w/ plot, summary, and table ----
+      # Example: https://shiny.rstudio.com/articles/tabsets.html
+      
       tabsetPanel(type = "tabs",
                   tabPanel("Plot", plotOutput("plot")),
                   tabPanel("Summary", verbatimTextOutput("summary")),
