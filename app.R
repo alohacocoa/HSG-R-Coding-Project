@@ -18,7 +18,7 @@ packages <- c(
   "shiny",
   "ggplot2",
   "data.table",
-  "todor" #helps with code organization
+  "todor"
 ) 
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
@@ -28,7 +28,7 @@ lapply(packages, library, character.only = TRUE)
 
 
 # 2 - Data import ---------------------------------------------------------
-data <- fread('./data/shiny_data.csv')
+data <- data.table::fread('./data/shiny_data.csv')
 
 
 
