@@ -98,7 +98,7 @@ myUi <- fluidPage(
   sidebarLayout(
     # Inputs
     sidebarPanel(
-      h2("Do you know about your country?"),
+      h2("Do you know your country?"),
       # p("Select your data to display"),
       sliderInput(inputId = "x", 
                   label = "Time Frame",
@@ -131,15 +131,17 @@ myUi <- fluidPage(
 
 # --- Server (creates the plot)
 myServer <- function(input, output) {
-  dselectedcountry <- reactive({
-    subset(d, country == input$c)
+  # Generate an HTML table view of the data ----
+  output$table <- renderDataTable({
+   d
   })
-  output$table = DT::renderDataTable({
-    dselectedcountry
+  # Generate a summary of the data ----
+  output$summary <- renderPrint({
+    summary(d)
   })
+  # Generate a plot of the data ----
   output$myPlot <- renderPlot({
-    dselectedcountry <- subset(d, country=input$c)
-    ggplot(data = dselectedcountry, aes(x = date, y = input$y)) + geom_point() + xlab("Year") + ylab(input$y)
+    ggplot(data = subset(d, country %in% input$c), aes(x = date, y = input$y)) + geom_point() + xlab("Year") + ylab(input$y)
   })    # end of renderPlot
 }       # end of function
 
