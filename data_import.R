@@ -31,10 +31,14 @@ rm(list = c("packages", "installed_packages"))
 
 #Looking for indicators of interest
 NA_check <- rbind(
-filter(wbstats::wb_search("corporate"), str_detect(indicator, "tax")),
-filter(wbstats::wb_search("unemployment"), str_detect(indicator, "total")),
-filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth"))
-)
+# filter(wbstats::wb_search("corporate"), str_detect(indicator, "tax")),
+# filter(wbstats::wb_search("unemployment"), str_detect(indicator, "total")),
+# filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth")),
+filter(wbstats::wb_search("sanitation"), str_detect(indicator, "Coverage")),
+wbstats::wb_search("hdi"),
+# filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth")),
+#filter(wbstats::wb_search("GINI"), str_detect(indicator, "index")) SI.POV.GINI the only good measure
+) 
 
 #Calculating number of missing values
 n <- 1
@@ -62,7 +66,9 @@ View(arrange(NA_check, desc(total_non_NA)))
 #The selection is based on the "indicator_id" column
 my_indicators <- c(
   unemployment_rate = "SL.UEM.TOTL.ZS",
-  GDP_growth_pc = "NY.GDP.PCAP.KD.ZG"
+  GDP_growth_pc = "NY.GDP.PCAP.KD.ZG",
+  GINI = "SI.POV.GINI",
+  HDI = "UNDP.HDI.XD"
 )
 
 #Finally we download the desired data from world bank

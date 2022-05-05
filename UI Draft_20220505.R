@@ -18,9 +18,7 @@ packages <- c(
   "data.table",
   "wbstats",
   "stringr",
-  "shiny",
-  "ggplot2",
-  "DT"
+  "ggplot2"
 ) 
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
@@ -33,11 +31,15 @@ rm(list = c("packages", "installed_packages"))
 #The code below implements this
 
 #Looking for indicators of interest
-NA_check <- rbind(
-  filter(wbstats::wb_search("corporate"), str_detect(indicator, "tax")),
-  filter(wbstats::wb_search("unemployment"), str_detect(indicator, "total")),
-  filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth"))
-)
+#NA_check <- rbind(
+# filter(wbstats::wb_search("corporate"), str_detect(indicator, "tax")),
+# filter(wbstats::wb_search("unemployment"), str_detect(indicator, "total")),
+# filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth")),
+#wbstats::wb_search("healthcare")
+#wbstats::wb_search("UNDP.HDI.XD") #other HDI measures cannot be fetched due to an issue with the API
+  # filter(wbstats::wb_search("GDP"), str_detect(indicator, "growth")),
+  #filter(wbstats::wb_search("GINI"), str_detect(indicator, "index")) SI.POV.GINI the only good measure
+#) 
 
 #Calculating number of missing values
 n <- 1
@@ -65,7 +67,10 @@ View(arrange(NA_check, desc(total_non_NA)))
 #The selection is based on the "indicator_id" column
 my_indicators <- c(
   unemployment_rate = "SL.UEM.TOTL.ZS",
-  GDP_growth_pc = "NY.GDP.PCAP.KD.ZG"
+  GDP_growth_pc = "NY.GDP.PCAP.KD.ZG",
+  child_mortality = "5.51.01.03.mortal",
+  gender_equality_index = "5.51.01.07.gender",
+  current_health_expenditure_as_prcnt_of_GDP = "SH.XPD.CHEX.GD.ZS"
 )
 
 #Finally we download the desired data from world bank
@@ -81,15 +86,18 @@ d <- d %>%
   tidyr::drop_na() %>%
   group_by(country) %>%
   mutate(n=n()) %>%
-  filter(n==21) %>%
+  filter(n>=15) %>%
   ungroup() %>%
   select(-n)
 
-sum(length(unique(d$country))) #We have 168 countries with complete data for 2000-2020
+sum(length(unique(d$country))) #We have 122 countries with at least 15 complete years between 2000-2020
 
 #Save to "data" folder
 #dir.create('./data/')
 #data.table::fwrite(d, './data/shiny_data.csv')
+
+
+
 #read.csv("./data/shiny_data.csv")
 library(shiny)
 library(DT)
@@ -145,4 +153,3 @@ myServer <- function(input, output) {
 
 # Create a Shiny app 
 shinyApp(ui = myUi, server = myServer)
-       
