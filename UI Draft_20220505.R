@@ -19,7 +19,8 @@ packages <- c(
   "wbstats",
   "stringr",
   "shiny",
-  "ggplot2"
+  "ggplot2",
+  "DT"
 ) 
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
@@ -91,7 +92,7 @@ sum(length(unique(d$country))) #We have 168 countries with complete data for 200
 #data.table::fwrite(d, './data/shiny_data.csv')
 #read.csv("./data/shiny_data.csv")
 library(shiny)
-
+library(DT)
 # --- User Interface (shows the plot)
 myUi <- fluidPage(
   sidebarLayout(
@@ -112,22 +113,33 @@ myUi <- fluidPage(
       selectInput(inputId = "c", 
                   label = "Country",
                   choices = unique(d$country),
-                  selected = "Denmark",
+                  selected = c("Denmark","China"),
                   multiple = TRUE
       )
       
     ),    # End of sidebarPanel
     # Outputs
     mainPanel(
-      plotOutput(outputId = "myPlot")
+      tabsetPanel(type = "tabs",
+                  tabPanel("Plot", plotOutput("myPlot")),
+                  tabPanel("Summary", verbatimTextOutput("summary")),
+                  tabPanel("Table", tableOutput("table")))
     )    # end of  mainPanel
   )      # end of sidebarLayout
 )        # end of fluidPage
 
+
 # --- Server (creates the plot)
 myServer <- function(input, output) {
+  dselectedcountry <- reactive({
+    subset(d, country == input$c)
+  })
+  output$table = DT::renderDataTable({
+    dselectedcountry
+  })
   output$myPlot <- renderPlot({
-    ggplot(data = subset(d, country=input$c), aes(x = date, y = input$y)) + geom_point()
+    dselectedcountry <- subset(d, country=input$c)
+    ggplot(data = dselectedcountry, aes(x = date, y = input$y)) + geom_point() + xlab("Year") + ylab(input$y)
   })    # end of renderPlot
 }       # end of function
 
