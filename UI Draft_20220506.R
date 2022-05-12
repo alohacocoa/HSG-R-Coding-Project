@@ -21,7 +21,10 @@ packages <- c(
   "stringr",
   "ggplot2",
   "shiny",
-  "DT"
+  "DT",
+  "shinythemes",
+  "shinyWidgets",
+  "ggthemes"
 )
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
@@ -35,8 +38,9 @@ rm(list = c("packages", "installed_packages"))
 my_indicators <- c(
   unemployment_rate = "SL.UEM.TOTL.ZS",
   GDP_growth_pc = "NY.GDP.PCAP.KD.ZG",
-  current_health_expenditure_as_prcnt_of_GDP = "SH.XPD.CHEX.GD.ZS"
-)
+  current_health_expenditure_as_prcnt_of_GDP = "SH.XPD.CHEX.GD.ZS",
+  GINI = "SI.POV.GINI"
+  )
 
 #We download the desired data from world bank
 d <- wbstats::wb_data(
@@ -54,15 +58,15 @@ d <- merge(x = d, y = countrylist[ , c("country", "region")], by = "country", al
 # Drop NAs ----------------------------------------------------------------
 #Drop countries that have less than 15 complete cases
 #Complete cases meaning that there are no missing values
-d <- d %>%
-  #tidyr::drop_na() %>% ## i disabled this because I need to sort out the regional numbers
-  group_by(country) %>%
-  mutate(n=n()) %>%
-  filter(n>=15) %>%
-  ungroup() %>%
-  select(-n)
-
-#sum(length(unique(d$country))) We have 266 regional data with at least 15 complete years between 2000-2020
+# d <- d %>%
+#   tidyr::drop_na() %>% ## i disabled this because I need to sort out the regional numbers
+#   group_by(country) %>%
+#   mutate(n=n()) %>%
+#   filter(n>=5) %>%
+#   ungroup() %>%
+#   select(-n)
+# 
+# sum(length(unique(d$country))) # We have 266 regional data with at least 15 complete years between 2000-2020
 #the above line is no longer accurate as "drop_na()" is not active
 #maybe we can also forget about dropping NAs? shouldn't cost us any points I think
 
@@ -70,30 +74,25 @@ regionlist <- unique(subset(d, region=="Aggregates")$country)
 countries <- unique(d$country) #countries including regions
 countrylist <- countries[!(countries %in% regionlist)] #specific country names
 
-install.packages("shinyWidgets")
-library(shinyWidgets)
-install.packages("shinythemes")
-library(shinythemes)
-
 # Sidebar (user interface) ----------------------------------------------------------
 myUi <- fluidPage(
 
   # Uniform color background
- setBackgroundColor(
-   color = c("Silver"),
-   gradient = c("linear"),
-   direction = c("bottom"),
-   shinydashboard = FALSE
- ),
+ # setBackgroundColor(
+ #   color = c("Silver"),
+ #   gradient = c("linear"),
+ #   direction = c("bottom"),
+ #   shinydashboard = FALSE
+ # ), test
 
  #Journal theme from bootswatch
-theme = shinytheme("united"),
+theme = shinytheme("journal"),
 
   titlePanel(title=
              div(
                style="overflow: auto",
                h1("Do you know your country?", style="float: left"),
-               img(src="hsg.jpg", height=50, style="float: right")
+               img(src="hsg.png", height=50, style="float: right")
                ),
              div(style="clear:both")
     ),
@@ -110,8 +109,10 @@ theme = shinytheme("united"),
 
      selectInput(inputId = "y",
                  label = "Data",
-                 choices = c("GDP Growth" = "GDP_growth_pc", "Unemployment Rate" = "unemployment_rate",
-                            "Health Expenditure Ratio" = "current_health_expenditure_as_prcnt_of_GDP" ),
+                 choices = c("GDP Growth" = "GDP_growth_pc",
+                             "Unemployment Rate" = "unemployment_rate",
+                            "Health Expenditure Ratio" = "current_health_expenditure_as_prcnt_of_GDP",
+                            "Gini Index" = "GINI"),
                  selected = "GDP Growth"
      ),
 
