@@ -14,15 +14,15 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # Load packages
 # (or install them, if not installed already)
 packages <- c(
-  "tidyr", 
-  "dplyr", 
+  "tidyr",
+  "dplyr",
   "data.table",
   "wbstats",
   "stringr",
   "ggplot2",
   "shiny",
   "DT"
-) 
+)
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {install.packages(packages[!installed_packages])}
 lapply(packages, library, character.only = TRUE)
@@ -67,13 +67,28 @@ d <- d %>%
 #maybe we can also forget about dropping NAs? shouldn't cost us any points I think
 
 regionlist <- unique(subset(d, region=="Aggregates")$country)
-countries <- unique(d$countyry) #countries including regions
+countries <- unique(d$country) #countries including regions
 countrylist <- countries[!(countries %in% regionlist)] #specific country names
 
-
+install.packages("shinyWidgets")
+library(shinyWidgets)
+install.packages("shinythemes")
+library(shinythemes)
 
 # Sidebar (user interface) ----------------------------------------------------------
 myUi <- fluidPage(
+
+  # Uniform color background
+ setBackgroundColor(
+   color = c("Silver"),
+   gradient = c("linear"),
+   direction = c("bottom"),
+   shinydashboard = FALSE
+ ),
+
+ #Journal theme from bootswatch
+theme = shinytheme("united"),
+
   titlePanel(title=
              div(
                style="overflow: auto",
@@ -92,31 +107,31 @@ myUi <- fluidPage(
                  timeFormat="%Y",
                  sep = ""
      ),
-       
-     selectInput(inputId = "y", 
+
+     selectInput(inputId = "y",
                  label = "Data",
                  choices = c("GDP Growth" = "GDP_growth_pc", "Unemployment Rate" = "unemployment_rate",
                             "Health Expenditure Ratio" = "current_health_expenditure_as_prcnt_of_GDP" ),
                  selected = "GDP Growth"
      ),
-     
-     selectInput(inputId = "r", 
+
+     selectInput(inputId = "r",
                  label = "Regions",
                  choices = regionlist,
                  selected = "World",
                  multiple = TRUE
      ),
-     
-     selectInput(inputId = "c", 
+
+     selectInput(inputId = "c",
                  label = "Country",
                  choices = countrylist,
                  selected = c("China","Mexico"),
                  multiple = TRUE
      ),
-     
+
      # Data Download Button
      downloadButton("downloadData", "Download Data")
-     
+
    ),    # End of sidebarPanel
 
 
@@ -125,7 +140,7 @@ myUi <- fluidPage(
    mainPanel(
      tabsetPanel(type = "tabs",
                  tabPanel("Plot",
-                          plotOutput("myPlot"), 
+                          plotOutput("myPlot"),
                           downloadButton("downloadPlot",
                                          "Download Graph")
                           ),
@@ -134,7 +149,7 @@ myUi <- fluidPage(
                           )
                  ),
 
-   
+
    )    # end of  mainPanel
  )      # end of sidebarLayout
 )        # end of fluidPage
@@ -147,25 +162,25 @@ myServer <- function(input, output) {
   d_filtered <- reactive({ # David: why are curly brackets here necessary?
     selectedc <- c(input$r, input$c)
     # Filter the data and summarise
-    d %>% filter(country %in% selectedc) 
+    d %>% filter(country %in% selectedc)
   })
-  
+
   plotInput = function() {
-  ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + geom_line() + 
+  ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + geom_line(size=2) +
     labs(x ="Year") +
     coord_cartesian(xlim=input$slider)
   }
-  
+
  # Generate a summary of the data ----
  output$summary <- renderPrint({
    summary(d_filtered())
  })
- 
+
  # Generate a plot of the data ----
  output$myPlot <- renderPlot({
    print(plotInput())
   })
- 
+
  # Download dataset as csv
  output$downloadData <- downloadHandler(
    filename = function() {
@@ -174,7 +189,7 @@ myServer <- function(input, output) {
    content = function(file) {
      write.csv(d_filtered(), file, row.names = FALSE)
    })
- 
+
  # Download graph as png
  output$downloadPlot <- downloadHandler(
    filename = function() {
@@ -187,6 +202,7 @@ myServer <- function(input, output) {
 
 
 # Shiny function call -----------------------------------------------------
-# Create a Shiny app 
+# Create a Shiny app
 shinyApp(ui = myUi, server = myServer)
-       
+
+
