@@ -65,7 +65,7 @@ d <- merge(x = d, y = countrylist[ , c("country", "region")], by = "country", al
 #   filter(n>=5) %>%
 #   ungroup() %>%
 #   select(-n)
-# 
+#
 # sum(length(unique(d$country))) # We have 266 regional data with at least 15 complete years between 2000-2020
 #the above line is no longer accurate as "drop_na()" is not active
 #maybe we can also forget about dropping NAs? shouldn't cost us any points I think
@@ -85,8 +85,8 @@ myUi <- fluidPage(
  #   shinydashboard = FALSE
  # ), test
 
- #Journal theme from bootswatch
-theme = shinytheme("journal"),
+ #Theme selector
+    shinythemes::themeSelector(),
 
   titlePanel(title=
              div(
@@ -169,7 +169,7 @@ myServer <- function(input, output) {
   plotInput = function() {
   ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + geom_line(size=2) +
     labs(x ="Year") +
-    coord_cartesian(xlim=input$slider)
+    coord_cartesian(xlim=input$slider)+ scale_color_gdocs() + theme_gdocs()
   }
 
  # Generate a summary of the data ----
