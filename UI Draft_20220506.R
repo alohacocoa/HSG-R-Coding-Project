@@ -74,20 +74,49 @@ regionlist <- unique(subset(d, region=="Aggregates")$country)
 countries <- unique(d$country) #countries including regions
 countrylist <- countries[!(countries %in% regionlist)] #specific country names
 
+
+
+themeSelector <- function() {
+  div(
+    div(
+      selectInput("shinytheme-selector", "Choose a theme",
+                  c("default", shinythemes:::allThemes()),
+                  selectize = FALSE
+      )
+    ),
+    tags$script(
+      "$('#shinytheme-selector')
+        .on('change', function(el) {
+        var allThemes = $(this).find('option').map(function() {
+        if ($(this).val() === 'default')
+        return 'bootstrap';
+        else
+        return $(this).val();
+        });
+        // Find the current theme
+        var curTheme = el.target.value;
+        if (curTheme === 'default') {
+        curTheme = 'bootstrap';
+        curThemePath = 'shared/bootstrap/css/bootstrap.min.css';
+        } else {
+        curThemePath = 'shinythemes/css/' + curTheme + '.min.css';
+        }
+        // Find the <link> element with that has the bootstrap.css
+        var $link = $('link').filter(function() {
+        var theme = $(this).attr('href');
+        theme = theme.replace(/^.*\\//, '').replace(/(\\.min)?\\.css$/, '');
+        return $.inArray(theme, allThemes) !== -1;
+        });
+        // Set it to the correct path
+        $link.attr('href', curThemePath);
+        });"
+    )
+  )
+}
+
+
 # Sidebar (user interface) ----------------------------------------------------------
 myUi <- fluidPage(
-
-  # Uniform color background
- # setBackgroundColor(
- #   color = c("Silver"),
- #   gradient = c("linear"),
- #   direction = c("bottom"),
- #   shinydashboard = FALSE
- # ), test
-
- #Theme selector
-    shinythemes::themeSelector(),
-
   titlePanel(title=
              div(
                style="overflow: auto",
@@ -97,8 +126,11 @@ myUi <- fluidPage(
              div(style="clear:both")
     ),
  sidebarLayout(
-   # Inputs
+       # Inputs
+   
    sidebarPanel(
+     themeSelector(),
+     
      sliderInput("slider", label = "Date Range", #David: is there particular reason why put these two on one line and didn't write "inputId"? if not then that's fine
                  min = min(d$date),
                  max = max(d$date),
@@ -109,7 +141,7 @@ myUi <- fluidPage(
 
      selectInput(inputId = "y",
                  label = "Data",
-                 choices = c("GDP Growth" = "GDP_growth_pc",
+                 choices = c("GDP Growth per Capita" = "GDP_growth_pc",
                              "Unemployment Rate" = "unemployment_rate",
                             "Health Expenditure Ratio" = "current_health_expenditure_as_prcnt_of_GDP",
                             "Gini Index" = "GINI"),
@@ -132,8 +164,9 @@ myUi <- fluidPage(
 
      # Data Download Button
      downloadButton("downloadData", "Download Data")
-
-   ),    # End of sidebarPanel
+   ),
+   
+   # End of sidebarPanel
 
 
 # Main panel (output) --------------------------------------------------
@@ -199,6 +232,8 @@ myServer <- function(input, output) {
    content = function(file) {
      ggsave(file, plot = plotInput())
    })
+ 
+ 
 }       # end of function
 
 
