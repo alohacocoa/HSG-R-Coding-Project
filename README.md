@@ -8,4 +8,4 @@ The code of this repository contains an R shiny project that can be executed to 
 To run the app, you need to have R and R Studio installed on your computer. You can then run the program by opening `app.R` with R Studio.
 
 # Disclaimer
-This code was user for non-commercial research purposes only.
+This code was used for non-commercial research purposes only.
