@@ -136,9 +136,10 @@ names(colors) <- colors_names
 colors <- colors[!str_detect(colors, "gradient|continuous")] #getting rid of these because they cause errors
 
 # ggplot graph type
-types <- c("Line Graph" = "geom_line",
-           "Step Graph" = "geom_step")
+types <- c("Line Plot" = "geom_line",
+           "Step Plot" = "geom_step")
 
+typesdictionary <- setNames(names(types), types)
 
 
 # 4) UI ----------------------------------------------------------
@@ -254,14 +255,12 @@ myServer <- function(input, output) {
     d %>% filter(country %in% selectedc)
   })
   
-  
-  
   # Set Graph Parameters with ggplot
   plotInput = function() {
     ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + 
       labs(x ="Year", y = varnamesdictionary[input$y]) +
-      coord_cartesian(xlim=input$slider)+  
-      ggtitle(paste("Line plot of",varnamesdictionary[input$y])) +
+      coord_cartesian(xlim=input$slider)+
+      ggtitle(paste(typesdictionary[input$type], "of", varnamesdictionary[input$y])) +
       get(input$theme)() +
       get(input$color)() +
       get(input$type)(size=2)
