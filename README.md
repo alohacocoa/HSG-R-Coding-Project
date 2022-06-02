@@ -29,12 +29,12 @@ You can also change the appearance of the plot by using the `Graph Theme` and `G
 ![Changing the plot theme](img/shiny3.png)
 
 
-Next, we switch from the default line graph to a step graph. Use the radio buttons to switch between the two: 
+Next, we switch from the default line graph to a step graph. Note that the plot title also updates automatically. Use the radio buttons to switch between the two.: 
 
 ![Changing the graph type](img/shiny4.png)
 
 
-You can choose between a number of different variables, with the data being provided by World Bank. The default is `GDP Growth per Capita`. Here we changed it to `Unemployment Rate` (note that there can be missing values depending on your selection):
+You can choose between a number of different variables, with the data being provided by World Bank. The default is `GDP Growth per Capita`. Here we changed it to `Unemployment Rate` (note that there can be missing values depending on your selection). Note that the plot title also updates automatically. :
 
 ![Changing the variable](img/shiny5.png)
 
