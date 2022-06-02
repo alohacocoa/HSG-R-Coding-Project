@@ -124,7 +124,7 @@ myUi <- fluidPage(
                  style="overflow: auto",
                  h3(“Do you know your country?", style="float: left"),
                  img(src="hsg.png", height=50, style="float: right”),
-		p(“This is a data visualisation application that extracts and prints World Bank statistics as line graphs. You may specify your own parameters for the graph with the sidebar, including data type, regions, countries, timeframe, and display theme. The selected 		data and graph created can also be downloaded.”)
+		p(“This is a data visualisation application that extracts and prints World Bank statistics as line graphs. You may specify your own parameters for the graph with the sidebar, including data type, regions, countries, timeframe, and display theme. The selected data and graph created can also be downloaded.”)
                ),
              div(style="clear:both")
   ),
@@ -169,7 +169,7 @@ myUi <- fluidPage(
       ),
 
       # Data Download Button setup
-      downloadButton("downloadData", "Download Data")
+      downloadButton("downloadData", "Download Data"),
       p("Source: World Bank")
     ),
     # End of Sidebar
@@ -206,7 +206,8 @@ myUi <- fluidPage(
   plotInput = function() {
     ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + geom_line(size=2) +
       labs(x ="Year", y = varnamesdictionary[input$y]) +
-      coord_cartesian(xlim=input$slider)+ scale_color_gdocs() + 
+      coord_cartesian(xlim=input$slider) + 
+      scale_color_gdocs() + 
       ggtitle(paste("Line plot of",varnamesdictionary[input$y]))
   }
   
