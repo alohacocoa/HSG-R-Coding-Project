@@ -2,7 +2,7 @@
 #    Student project in the course
 #    "8,789: Programming with Advanced Computer Languages"
 #
-#    R script
+#    R script: app source code
 
 
 # 1) Environment preparation -------------------------------------------------
@@ -131,13 +131,13 @@ colors <- ls(name = "package:ggthemes", pattern = "^scale_color_*")
 colors_names <- tools::toTitleCase(
   gsub("_", 
        " ", 
-            ls(name = "package:ggthemes", pattern = "^scale_color_*")))
+       ls(name = "package:ggthemes", pattern = "^scale_color_*")))
 names(colors) <- colors_names
 colors <- colors[!str_detect(colors, "gradient|continuous")] #getting rid of these because they cause errors
 
 # ggplot graph type
 types <- c("Line Graph" = "geom_line",
-          "Step Graph" = "geom_step")
+           "Step Graph" = "geom_step")
 
 
 
@@ -164,81 +164,81 @@ myUi <- fluidPage(
     # Inputs Selectors
     sidebarPanel(
       
-              # Select App Themes
-              themeSelector(),
-              
-              # Select Graph Themes
-              selectInput(inputId = "theme",
-                          label = "Graph Theme",
-                          choices = c(themes),
-                          selected = "theme_gdocs"
-              ),
-              
-              # Select Graph Colors
-              selectInput(inputId = "color",
-                          label = "Graph Colors",
-                          choices = c(colors),
-                          selected = "scale_color_gdocs"
-              ),
-              
-              # Select Graph Type
-              radioButtons(inputId = "type",
-                          label = "Graph Type",
-                          choices = c(types),
-                          selected = "geom_line"
-              ),
-  
-               # Data Input (y variable) Selector
-               selectInput(inputId = "y",
-                           label = "Data",
-                           choices = c(listofvar),
-                           selected = "GDP Growth per Capita"
-               ),
-               
-               # Data Input (country/region) Selector
-               selectInput(inputId = "r",
-                           label = "Regions",
-                           choices = regionlist,
-                           selected = "World",
-                           multiple = TRUE
-               ),
-               selectInput(inputId = "c",
-                           label = "Country",
-                           choices = countrylist,
-                           selected = c("China","Mexico"),
-                           multiple = TRUE
-               ),
-               
+      # Select App Themes
+      themeSelector(),
+      
+      # Select Graph Themes
+      selectInput(inputId = "theme",
+                  label = "Graph Theme",
+                  choices = c(themes),
+                  selected = "theme_gdocs"
+      ),
+      
+      # Select Graph Colors
+      selectInput(inputId = "color",
+                  label = "Graph Colors",
+                  choices = c(colors),
+                  selected = "scale_color_gdocs"
+      ),
+      
+      # Select Graph Type
+      radioButtons(inputId = "type",
+                   label = "Graph Type",
+                   choices = c(types),
+                   selected = "geom_line"
+      ),
+      
+      # Data Input (y variable) Selector
+      selectInput(inputId = "y",
+                  label = "Data",
+                  choices = c(listofvar),
+                  selected = "GDP Growth per Capita"
+      ),
+      
+      # Data Input (country/region) Selector
+      selectInput(inputId = "r",
+                  label = "Regions",
+                  choices = regionlist,
+                  selected = "World",
+                  multiple = TRUE
+      ),
+      selectInput(inputId = "c",
+                  label = "Country",
+                  choices = countrylist,
+                  selected = c("China","Mexico"),
+                  multiple = TRUE
+      ),
+      
       # Data Date Range (x variable) Slider
       sliderInput(inputId = "slider", 
-                     label = "Date Range", 
-                     min = min(d$date),
-                     max = max(d$date),
-                     value=c(min(d$date),max(d$date)),
-                     timeFormat="%Y",
-                     sep = ""
-                 ),
-                 
-                 # Data Download Button setup
-                 downloadButton("downloadData", "Download Data"),
-                 p("Source: World Bank", style="text-align: right; font-size: 1.2rem")
-               ),
-             # End of Sidebar
-             
-             # Main panel (Graph display) 
-             # Outputs
-             mainPanel(
-               # Tabs
-               tabsetPanel(type = "tabs",
-                           tabPanel("Plot",plotOutput("myPlot"), # Display Plot
-                                    downloadButton("downloadPlot", 
-                                                   "Download Graph") # Download Graph Button setup
-                           ),
-                           tabPanel("Summary",
-                                    verbatimTextOutput("summary")
-                           )),
-               
-             )    # end of  mainPanel
+                  label = "Date Range", 
+                  min = min(d$date),
+                  max = max(d$date),
+                  value=c(min(d$date),max(d$date)),
+                  timeFormat="%Y",
+                  sep = ""
+      ),
+      
+      # Data Download Button setup
+      downloadButton("downloadData", "Download Data"),
+      p("Source: World Bank", style="text-align: right; font-size: 1.2rem")
+    ),
+    # End of Sidebar
+    
+    # Main panel (Graph display) 
+    # Outputs
+    mainPanel(
+      # Tabs
+      tabsetPanel(type = "tabs",
+                  tabPanel("Plot",plotOutput("myPlot"), # Display Plot
+                           downloadButton("downloadPlot", 
+                                          "Download Graph") # Download Graph Button setup
+                  ),
+                  tabPanel("Summary",
+                           verbatimTextOutput("summary")
+                  )),
+      
+    )    # end of  mainPanel
   )      # end of sidebarLayout
 )        # end of fluidPage
 
@@ -254,8 +254,8 @@ myServer <- function(input, output) {
     d %>% filter(country %in% selectedc)
   })
   
-
-
+  
+  
   # Set Graph Parameters with ggplot
   plotInput = function() {
     ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + 
