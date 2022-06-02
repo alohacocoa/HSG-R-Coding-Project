@@ -9,9 +9,8 @@ First, download the entire repository to your computer. To run the app, you need
 
 !["Run app" button in RStudio](img/shiny0.png)
 
-
 # Code environment
-This code checks automatically whether you have installed the necessary packages, so there is no need to find and uncomment any `install.packages()` commands. Thus it should work out of the box for any environment. A CSV lsit of all the packages used in this project together with their version number are included in this repository. The R version that was used for writing the app is 3.6.1.
+This code checks automatically whether you have installed the necessary packages, so there is no need to find and uncomment any `install.packages()` commands. Thus it should work out of the box for any environment. A CSV list of all the packages used in this project together with their version number are included in this repository. The R version that was used for writing the app is 3.6.1.
 
 # App features
 After you successfully opened the app you will see the following:
