@@ -25,7 +25,8 @@ packages <- c(
   "DT",
   "shinythemes",
   "shinyWidgets",
-  "ggthemes"
+  "ggthemes",
+  "tools"
 )
 
 # (or install them, if not installed already)
@@ -76,14 +77,14 @@ countryregionnames <- unique(d$country) # countries including regions
 countrylist <- countryregionnames[!(countryregionnames %in% regionlist)] # specific country names
 
 # Function to fix all display strings if needed, similar to excel proper()
-proper = function(s) sub("(.)", ("\\U\\1"), tolower(s), pe=TRUE)
+proper <- function(s) sub(pattern="(.)", text=("\\U\\1"), tolower(s), pe=TRUE)
 
 # UI Design Theme function
 themeSelector <- function() {
   div(
     div(
-      selectInput("shinytheme-selector", "Choose a theme",
-                  c("default", proper(shinythemes:::allThemes())),
+      selectInput("shinytheme-selector", "App Theme",
+                  c("default", tools::toTitleCase(shinythemes:::allThemes())),
                   selectize = FALSE
       )
     ),
@@ -117,6 +118,28 @@ themeSelector <- function() {
   )
 }
 
+# ggplot design theme list
+themes <- ls(name = "package:ggthemes", pattern = "^theme*")
+themes_names <- tools::toTitleCase(
+  gsub("_", 
+       " ", 
+       ls(name = "package:ggthemes", pattern = "^theme*")))
+names(themes) <- themes_names
+
+# ggplot color list
+colors <- ls(name = "package:ggthemes", pattern = "^scale_color_*")
+colors_names <- tools::toTitleCase(
+  gsub("_", 
+       " ", 
+            ls(name = "package:ggthemes", pattern = "^scale_color_*")))
+names(colors) <- colors_names
+colors <- colors[!str_detect(colors, "gradient|continuous")] #getting rid of these because they cause errors
+
+# ggplot graph type
+types <- c("Line Graph" = "geom_line",
+          "Step Graph" = "geom_step")
+
+
 
 # 4) UI ----------------------------------------------------------
 myUi <- fluidPage(
@@ -130,15 +153,40 @@ myUi <- fluidPage(
              div(style="clear:both")
   ),
   
-  p("This is a data visualisation application that extracts and prints World Bank statistics as line graphs. You may specify your own parameters for the graph with the sidebar, including data type, regions, countries, timeframe, and display theme. The selected data and graph created can also be downloaded."),
+  p("This is a data visualisation application that extracts and prints World Bank statistics as line graphs. 
+    You may specify your own parameters for the graph with the sidebar, 
+    including data type, regions, countries, timeframe, and display theme. 
+    The selected data and graph created can also be downloaded. 
+    Note that data is incomplete for certain countries and certain years."),
   
   # Sidebar options
   sidebarLayout(
     # Inputs Selectors
     sidebarPanel(
       
-      # Select Themes
-      themeSelector(), 
+              # Select App Themes
+              themeSelector(),
+              
+              # Select Graph Themes
+              selectInput(inputId = "theme",
+                          label = "Graph Theme",
+                          choices = c(themes),
+                          selected = "theme_gdocs"
+              ),
+              
+              # Select Graph Colors
+              selectInput(inputId = "color",
+                          label = "Graph Colors",
+                          choices = c(colors),
+                          selected = "scale_color_gdocs"
+              ),
+              
+              # Select Graph Type
+              radioButtons(inputId = "type",
+                          label = "Graph Type",
+                          choices = c(types),
+                          selected = "geom_line"
+              ),
   
                # Data Input (y variable) Selector
                selectInput(inputId = "y",
@@ -173,7 +221,7 @@ myUi <- fluidPage(
                  
                  # Data Download Button setup
                  downloadButton("downloadData", "Download Data"),
-                 p("Source: World Bank")
+                 p("Source: World Bank", style="text-align: right; font-size: 1.2rem")
                ),
              # End of Sidebar
              
@@ -189,6 +237,7 @@ myUi <- fluidPage(
                            tabPanel("Summary",
                                     verbatimTextOutput("summary")
                            )),
+               
              )    # end of  mainPanel
   )      # end of sidebarLayout
 )        # end of fluidPage
@@ -205,12 +254,17 @@ myServer <- function(input, output) {
     d %>% filter(country %in% selectedc)
   })
   
+
+
   # Set Graph Parameters with ggplot
   plotInput = function() {
-    ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + geom_line(size=2) +
+    ggplot(data = d_filtered(), aes_string(x = "date", y = input$y, col = "country")) + 
       labs(x ="Year", y = varnamesdictionary[input$y]) +
-      coord_cartesian(xlim=input$slider)+ scale_color_gdocs() + 
-      ggtitle(paste("Line plot of",varnamesdictionary[input$y]))
+      coord_cartesian(xlim=input$slider)+  
+      ggtitle(paste("Line plot of",varnamesdictionary[input$y])) +
+      get(input$theme)() +
+      get(input$color)() +
+      get(input$type)(size=2)
   }
   
   # Print a summary of filtered data
