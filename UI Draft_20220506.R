@@ -74,13 +74,14 @@ regionlist <- unique(subset(d, region=="Aggregates")$country)
 countries <- unique(d$country) #countries including regions
 countrylist <- countries[!(countries %in% regionlist)] #specific country names
 
-
+# Function to fix all display strings if needed, similar to excel proper()
+proper = function(s) sub("(.)", ("\\U\\1"), tolower(s), pe=TRUE)
 
 themeSelector <- function() {
   div(
     div(
       selectInput("shinytheme-selector", "Choose a theme",
-                  c("default", shinythemes:::allThemes()),
+                  c("default", proper(shinythemes:::allThemes())),
                   selectize = FALSE
       )
     ),
