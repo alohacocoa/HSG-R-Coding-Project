@@ -5,7 +5,7 @@ This repository contains code written in the context of a group project in the c
 The code of this repository contains an R shiny project that can be executed to run a local HTML app. The app displays a line plot that contains data by the worldbank on different characteristics for a list of selected countries. The user can change the appearance of the app, set the date range, choose between different variables, select different countries or regions and the user can also download the data or the graph, all by clicking corresponding UI elements.
 
 # How to run this code
-To run the app, you need to have R and RStudio installed on your computer. You can then run the program by opening and executing `runApp.R` with RStudio. To see the source code of the app, navigate to the `my_app` folder and open `app.R`. Alternatively, the app can also be run by opening `app.R` and clicking the `Run App` button in the RStudio interface.
+First, download the entire repository to your computer. To run the app, you need to have R and RStudio installed on your computer. You can then run the program by opening and executing `runApp.R` with RStudio. To see the source code of the app, navigate to the `my_app` folder and open `app.R`. Alternatively, the app can also be run by opening `app.R` and clicking the `Run App` button in the RStudio interface.
 
 !["Run app" button in RStudio](img/shiny0.png)
 
