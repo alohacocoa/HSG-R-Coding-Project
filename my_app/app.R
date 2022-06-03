@@ -61,23 +61,20 @@ d <- merge(x = d, y = countrylist[ , c("country", "region")], by = "country", al
 
 # 3) Prepare for UI -----------------------------------------------------------
 # Making alias for the variables
-listofvar <- c("GDP Growth per Capita"="GDP_growth_pc",
+listofvar <- c("GDP Growth per Capita %"="GDP_growth_pc",
                "Unemployment Rate"="unemployment_rate",
-               "Current Health Expenditure %"="current_health_expenditure_as_prcnt_of_GDP",
+               "Health Expenditure % of GDP"="current_health_expenditure_as_prcnt_of_GDP",
                "Gini Coefficient"="GINI")
 
-varnamesdictionary <- c("GDP_growth_pc"="GDP Growth per Capita",
+varnamesdictionary <- c("GDP_growth_pc"="GDP Growth per Capita %",
                         "unemployment_rate"="Unemployment Rate",
-                        "current_health_expenditure_as_prcnt_of_GDP"="Current Health Expenditure %",
+                        "current_health_expenditure_as_prcnt_of_GDP"="Health Expenditure % of GDP",
                         "GINI"="Gini Coefficient")
 
 # Separate the region & country lists for display
 regionlist <- unique(subset(d, region=="Aggregates")$country) # lists of regions
 countryregionnames <- unique(d$country) # countries including regions
 countrylist <- countryregionnames[!(countryregionnames %in% regionlist)] # specific country names
-
-# Function to fix all display strings if needed, similar to excel proper()
-proper <- function(s) sub(pattern="(.)", text=("\\U\\1"), tolower(s), pe=TRUE)
 
 # UI Design Theme function
 themeSelector <- function() {
